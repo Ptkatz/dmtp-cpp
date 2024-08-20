@@ -7,6 +7,7 @@
 #include <cstdint>
 #include "json11.hpp"
 
+class IPackage;
 class ByteBlock {
 private:
     int m_dis = 1;
@@ -295,5 +296,86 @@ public:
             Write(data);  // 写入数据
         }
     }
-    
+
+    // 从当前流位置读取一个标识值，判断是否为null
+    bool ReadIsNull() {
+        uint8_t status = ReadByte();
+        if (status == 0) {
+            return true;
+        }
+        else if (status == 1) {
+            return false;
+        }
+        else {
+            throw std::runtime_error("标识既非Null，也非NotNull，可能是流位置发生了错误。");
+        }
+    }
+
+    // 判断该值是否为Null，然后写入标识值 (适用于类类型)
+    template <typename T>
+    typename std::enable_if<std::is_class<T>::value>::type WriteIsNull(T* t) {
+        if (t == nullptr) {
+            WriteNull();
+        }
+        else {
+            WriteNotNull();
+        }
+    }
+
+    // 判断该值是否为Null，然后写入标识值 (适用于可空类型)
+    template <typename T>
+    typename std::enable_if<std::is_arithmetic<T>::value>::type WriteIsNull(T* t) {
+        if (t == nullptr) {
+            WriteNull();
+        }
+        else {
+            WriteNotNull();
+        }
+    }
+
+    // 写入一个标识非Null值
+    void WriteNotNull() {
+        Write(static_cast<uint8_t>(1));
+    }
+
+    // 写入一个标识Null值
+    void WriteNull() {
+        Write(static_cast<uint8_t>(0));
+    }
+
+    // 读取一个指定类型的包
+    template <typename TPackage>
+    std::unique_ptr<TPackage> ReadPackage() {
+        static_assert(std::is_base_of<IPackage, TPackage>::value, "TPackage must implement IPackage");
+
+        if (ReadIsNull()) {
+            return nullptr;
+        }
+        else {
+            auto package = std::make_unique<TPackage>();
+            package->Unpackage(*this);
+            return package;
+        }
+    }
+
+    // 以包进行写入。允许null值。
+    template <typename TPackage>
+    void WritePackage(TPackage* package) {
+        static_assert(std::is_base_of<IPackage, TPackage>::value, "TPackage must implement IPackage");
+
+        WriteIsNull(package);
+        if (package != nullptr) {
+            package->Package(*this);
+        }
+    }
+
+
+};
+
+class IPackage {
+public:
+    virtual void Package(ByteBlock& byteBlock) const = 0;
+    virtual void Unpackage(ByteBlock& byteBlock) = 0;
+
+    virtual ~IPackage() = default;
 };
