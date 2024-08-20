@@ -134,6 +134,7 @@
     <ClInclude Include="ByteBlock.h" />
     <ClInclude Include="DmtpMessage.h" />
     <ClInclude Include="json11.hpp" />
+    <ClInclude Include="Metadata.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

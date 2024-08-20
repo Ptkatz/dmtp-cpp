@@ -1,5 +1,7 @@
 ﻿#include "ByteBlock.h"
 #include "DmtpMessage.h"
+#include "Metadata.h"
+#include <iostream>
 
 class MyObject {
 public:
@@ -24,8 +26,7 @@ public:
     }
 };
 
-int main()
-{
+void TestDmtpMessage() {
     ByteBlock byteBlock;
     MyObject obj(1, "example");
     byteBlock.Write(10);
@@ -36,4 +37,30 @@ int main()
     ByteBlock dmtpBlock;
     dmtpMessage.Build(dmtpBlock);
     DmtpMessage dmtpMsg = DmtpMessage::CreateFrom(dmtpBlock.Buffer());
+}
+
+void TestMetadata() {
+    Metadata metadata;
+    ByteBlock byteBlock;
+    metadata.Add("Key1", "Value1").Add("Key2", "Value2");
+
+    // 打包数据
+    metadata.Package(byteBlock);
+
+    // 重置位置以进行解包
+    byteBlock.Pos(0);
+
+    // 解包数据
+    Metadata unpackedMetadata;
+    unpackedMetadata.Unpackage(byteBlock);
+
+    // 输出解包后的数据
+    std::cout << "Key1: " << unpackedMetadata["Key1"] << std::endl;
+    std::cout << "Key2: " << unpackedMetadata["Key2"] << std::endl;
+}
+
+int main()
+{
+    TestDmtpMessage();
+    TestMetadata();
 }
