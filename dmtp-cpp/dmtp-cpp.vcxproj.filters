@@ -21,6 +21,9 @@
     <ClCompile Include="json11.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="FastBinaryFormatter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ByteBlock.h">
@@ -33,6 +36,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Metadata.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SerializationType.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FastBinaryFormatter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TouchSocketBitConverter.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

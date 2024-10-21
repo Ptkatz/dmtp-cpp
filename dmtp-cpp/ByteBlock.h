@@ -1,4 +1,6 @@
 #pragma once
+#ifndef FASTBINARYFORMATTER_H
+#define FASTBINARYFORMATTER_H
 #include <vector>
 #include <string>
 #include <cstring>
@@ -6,8 +8,15 @@
 #include <algorithm>
 #include <cstdint>
 #include "json11.hpp"
+#include "FastBinaryFormatter.h"
+#include "SerializationType.h"
+#include "TouchSocketBitConverter.h"
 
 class IPackage;
+class ByteBlock;
+
+#endif
+
 class ByteBlock {
 private:
     int m_dis = 1;
@@ -23,9 +32,20 @@ public:
 
     ByteBlock(const std::vector<uint8_t>& bytes) : ByteBlock(bytes, bytes.size()) {}
 
+    ~ByteBlock() {
+        m_length = 0;
+        m_position = 0;
+        m_dis = 0;
+        m_buffer.clear();
+    }
+
     // 访问器
     const std::vector<uint8_t>& Buffer() const {
         return m_buffer;
+    }
+
+    void SetBuffer(int pos, uint8_t value) {
+        m_buffer[pos] = value;
     }
 
     int CanReadLen() const {
@@ -34,6 +54,11 @@ public:
 
     int Len() const {
         return static_cast<int>(m_length);
+    }
+
+    void SetLen(int len) {
+        m_length = len;
+        m_buffer.resize(len);
     }
 
     int Pos() const {
@@ -119,8 +144,7 @@ public:
 
     // 读取整数方法
     int32_t ReadInt32() {
-        int32_t value;
-        std::memcpy(&value, &m_buffer[m_position], 4);
+        int32_t value = TouchSocketBitConverter::ToInt32(m_buffer, m_position);
         m_position += 4;
         return value;
     }
@@ -131,8 +155,7 @@ public:
 
     // 读取短整型方法
     int16_t ReadInt16() {
-        int16_t value;
-        std::memcpy(&value, &m_buffer[m_position], 2);
+        int16_t value = TouchSocketBitConverter::ToInt16(m_buffer, m_position);
         m_position += 2;
         return value;
     }
@@ -143,8 +166,7 @@ public:
 
     // 读取长整型方法
     int64_t ReadInt64() {
-        int64_t value;
-        std::memcpy(&value, &m_buffer[m_position], 8);
+        int64_t value = TouchSocketBitConverter::ToInt64(m_buffer, m_position);
         m_position += 8;
         return value;
     }
@@ -155,8 +177,7 @@ public:
 
     // 读取字符方法
     char ReadChar() {
-        char value;
-        std::memcpy(&value, &m_buffer[m_position], 2);
+        char value = TouchSocketBitConverter::ToChar(m_buffer, m_position);
         m_position += 2;
         return value;
     }
@@ -167,8 +188,7 @@ public:
 
     // 读取布尔值方法
     bool ReadBoolean() {
-        bool value;
-        std::memcpy(&value, &m_buffer[m_position], 1);
+        bool value = TouchSocketBitConverter::ToBoolean(m_buffer, m_position);
         m_position += 1;
         return value;
     }
@@ -204,8 +224,7 @@ public:
 
     // 读取双精度浮点数方法
     double ReadDouble() {
-        double value;
-        std::memcpy(&value, &m_buffer[m_position], 8);
+        double value = TouchSocketBitConverter::ToDouble(m_buffer, m_position);
         m_position += 8;
         return value;
     }
@@ -216,8 +235,7 @@ public:
 
     // 读取单精度浮点数方法
     float ReadFloat() {
-        float value;
-        std::memcpy(&value, &m_buffer[m_position], 4);
+        float value = TouchSocketBitConverter::ToSingle(m_buffer, m_position);
         m_position += 4;
         return value;
     }
@@ -228,8 +246,7 @@ public:
 
     // 读取无符号短整型方法
     uint16_t ReadUInt16() {
-        uint16_t value;
-        std::memcpy(&value, &m_buffer[m_position], 2);
+        uint16_t value = TouchSocketBitConverter::ToUInt16(m_buffer, m_position);
         m_position += 2;
         return value;
     }
@@ -240,8 +257,7 @@ public:
 
     // 读取无符号整数方法
     uint32_t ReadUInt32() {
-        uint32_t value;
-        std::memcpy(&value, &m_buffer[m_position], 4);
+        uint32_t value = TouchSocketBitConverter::ToUInt32(m_buffer, m_position);
         m_position += 4;
         return value;
     }
@@ -252,8 +268,7 @@ public:
 
     // 读取无符号长整型方法
     uint64_t ReadUInt64() {
-        uint64_t value;
-        std::memcpy(&value, &m_buffer[m_position], 8);
+        uint64_t value = TouchSocketBitConverter::ToUInt64(m_buffer, m_position);
         m_position += 8;
         return value;
     }
@@ -264,34 +279,72 @@ public:
 
     // 读取对象方法
     template <typename T>
-    T ReadObject() {
+    T ReadObject(SerializationType serializationType = SerializationType::FastBinary) {
         int32_t length = ReadInt32();  // 读取对象的长度
 
         if (length == 0) {
             return T();  // 如果长度为0，返回类型的默认值
         }
 
-        std::string jsonString(m_buffer.begin() + Pos(), m_buffer.begin() + Pos() + length);  // 提取JSON字符串
-        std::string err;
-        auto json = json11::Json::parse(jsonString, err);  // 解析JSON字符串
+        switch (serializationType)
+        {
+        case SerializationType::FastBinary:
+            break;
+        case SerializationType::Json: {
+                std::string jsonString(m_buffer.begin() + Pos(), m_buffer.begin() + Pos() + length);  // 提取JSON字符串
+                std::string err;
+                auto json = json11::Json::parse(jsonString, err);  // 解析JSON字符串
 
-        if (!err.empty()) {
-            throw std::runtime_error("JSON解析错误: " + err);
+                if (!err.empty()) {
+                    throw std::runtime_error("JSON解析错误: " + err);
+                }
+
+                T obj = json;  // 将json对象转换为T类型的对象，需要确保T类型有从json11::Json类型构造的构造函数
+                m_position += length;  // 更新读取位置
+                return obj;
         }
-
-        T obj = json;  // 将json对象转换为T类型的对象，需要确保T类型有从json11::Json类型构造的构造函数
-        m_position += length;  // 更新读取位置
-        return obj;
+        case SerializationType::Xml:
+            break;
+        case SerializationType::SystemBinary:
+            break;
+        default:
+            break;
+        }
+        return nullptr;
     }
 
     // 写入对象方法
-    void WriteObject(const json11::Json& value) {
-        if (value.is_null()) {
+    template <typename T>
+    void WriteObject(const T& value, SerializationType serializationType = SerializationType::FastBinary) {
+        if (value == nullptr) {
             Write((int32_t)0);  // 如果对象为空，写入0
         }
         else {
-            std::string jsonString = value.dump();  // 序列化为JSON字符串
-            std::vector<uint8_t> data(jsonString.begin(), jsonString.end());  // 转换为字节数组
+            std::vector<uint8_t> data{};
+            switch (serializationType)
+            {
+            case SerializationType::FastBinary: {
+                data = FastBinaryFormatter::Serialize(value);
+                break;
+            }
+            case SerializationType::Json: {
+                    const json11::Json& jsonValue = static_cast<json11::Json>(value);
+                    if (jsonValue.is_null())
+                    {
+                        Write((int32_t)0);  // 如果对象为空，写入0
+                        return;
+                    }
+                    std::string jsonString = jsonValue.dump();  // 序列化为JSON字符串
+                    data = std::vector<uint8_t>(jsonString.begin(), jsonString.end());  // 转换为字节数组
+                    break;
+            }
+            case SerializationType::Xml:
+                break;
+            case SerializationType::SystemBinary:
+                break;
+            default:
+                break;
+            }
             Write(static_cast<int32_t>(data.size()));  // 写入数据长度
             Write(data);  // 写入数据
         }

@@ -1,6 +1,7 @@
 ﻿#include "ByteBlock.h"
 #include "DmtpMessage.h"
 #include "Metadata.h"
+#include "FastBinaryFormatter.h"
 #include <iostream>
 
 class MyObject {
@@ -31,7 +32,7 @@ void TestDmtpMessage() {
     MyObject obj(1, "example");
     byteBlock.Write(10);
     byteBlock.Write((const std::string&)"Hello");
-    byteBlock.WriteObject(static_cast<json11::Json>(obj));
+    byteBlock.WriteObject(static_cast<json11::Json>(obj), SerializationType::Json);
     DmtpMessage dmtpMessage(1000);
     dmtpMessage.BodyByteBlock = &byteBlock;
     ByteBlock dmtpBlock;
@@ -59,8 +60,12 @@ void TestMetadata() {
     std::cout << "Key2: " << unpackedMetadata["Key2"] << std::endl;
 }
 
+int TestFastSerialize() {
+    auto bytes = FastBinaryFormatter::Serialize<std::string>("test");
+    return 0;
+}
+
 int main()
 {
-    TestDmtpMessage();
-    TestMetadata();
+    TestFastSerialize();
 }
