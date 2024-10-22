@@ -2,9 +2,10 @@
 #include "DmtpMessage.h"
 #include "Metadata.h"
 #include "FastBinaryFormatter.h"
+#include "ISerializeObject.h"
 #include <iostream>
 
-class MyObject {
+class MyObject : public ISerializeObject {
 public:
     int id;
     std::string name;
@@ -19,7 +20,7 @@ public:
     }
 
     // 将MyObject序列化为json11::Json
-    operator json11::Json() const {
+   operator json11::Json() const override {
         return json11::Json::object{
             {"id", id},
             {"name", name}
@@ -61,7 +62,15 @@ void TestMetadata() {
 }
 
 int TestFastSerialize() {
-    auto bytes = FastBinaryFormatter::Serialize<std::string>("test");
+    //auto bytes1 = FastBinaryFormatter::Serialize<std::string>("test");
+    //auto str1 = FastBinaryFormatter::Deserialize<std::string>(bytes1);
+
+    MyObject obj(1, "Test");
+    auto jsonObj = obj.operator json11::Json();
+    json11::Json::object map = jsonObj.object_items();
+
+    auto bytes2 = FastBinaryFormatter::Serialize<MyObject>(obj);
+    
     return 0;
 }
 

@@ -1,6 +1,4 @@
 #pragma once
-#ifndef BYTEBLOCK_H
-#define BYTEBLOCK_H
 #include <iostream>
 #include <vector>
 #include <string>
@@ -10,13 +8,39 @@
 #include <chrono>
 #include <cstring>
 #include "ByteBlock.h"
+#include "Common.h"
 
-#endif
 template <typename T>
 inline constexpr bool is_enum_v = std::is_enum_v<T>;
 
-static class FastBinaryFormatter {
+class FastBinaryFormatter {
 private:
+    template <typename T>
+    static int SerializeClass(ByteBlock& byteBlock, const T& obj) {
+        int len = 0;
+        if constexpr (std::is_base_of_v<ISerializeObject, T>) {
+            const ISerializeObject& _Obj = obj;  // 通过引用来处理派生类对象
+            auto jsonObj = _Obj.operator json11::Json();  // 调用多态的转换操作符
+            json11::Json::object map = jsonObj.object_items();
+            for (const auto& pair : map) {
+                byteBlock.Write(pair.first);
+                if (pair.second.is_string()) {
+                    len += SerializeObject(byteBlock, pair.second.string_value());
+                }
+                else if (pair.second.is_number()) {
+                    len += SerializeObject(byteBlock, pair.second.int_value());
+                }
+                else if (pair.second.is_bool()) {
+                    len += SerializeObject(byteBlock, pair.second.bool_value());
+                }
+                else {
+                    len += SerializeObject(byteBlock, pair.second.object_items());
+                }
+            }
+        }
+        return len;
+    }
+
     template <typename T>
     static int SerializeObject(ByteBlock& byteBlock, const T& graph) {
         int len = 0;
@@ -104,12 +128,13 @@ private:
             else {
                 // 处理复杂类型
                 byteBlock.Position(startPosition + 4);
-                // 自定义复杂对象序列化的逻辑
-                // 根据需要实现复杂对象的序列化处理
                 if constexpr (std::is_same_v<T, std::string>) { // string
                     int pos = byteBlock.Pos();
                     byteBlock.Write(static_cast<std::string>(graph));
                     len += byteBlock.Pos() - pos;
+                }
+                else { // string
+                    len += SerializeClass(byteBlock, graph);
                 }
                 // len += SerializeClass(byteBlock, graph, serializerContext);
                 endPosition = byteBlock.Position();
@@ -136,10 +161,77 @@ private:
         return len + 4;
     }
 
-    //template <typename T>
-    //static T Deserialize(std::vector<uint8_t> datas, int offset) {
+    template <typename T>
+    static T* DeserializeObject(std::vector<uint8_t> datas, int offset) {
+        int len = TouchSocketBitConverter::ToInt32(datas, offset);
+        offset += 4;
+        T* obj = new T();
 
-    //}
+        if (len > 0)
+        {
+            if constexpr (!std::is_null_pointer_v<T>) {
+                if constexpr (std::is_same_v<T, uint8_t>) {  // byte
+                    obj = new uint8_t(datas[offset]);
+                }
+                else if constexpr (std::is_same_v<T, int8_t>) {  // sbyte
+                    obj = new int8_t(TouchSocketBitConverter::ToInt16(datas, offset));
+                }
+                else if constexpr (std::is_same_v<T, bool>) {  // bool
+                    obj = new bool(TouchSocketBitConverter::ToBoolean(datas, offset));
+                }
+                else if constexpr (std::is_same_v<T, int16_t>) {  // short
+                    obj = new int16_t(TouchSocketBitConverter::ToInt16(datas, offset));
+                }
+                else if constexpr (std::is_same_v<T, uint16_t>) {  // ushort
+                    obj = new uint16_t(TouchSocketBitConverter::ToInt16(datas, offset));
+                }
+                else if constexpr (std::is_same_v<T, int32_t>) {  // int
+                    obj = new int32_t(TouchSocketBitConverter::ToInt32(datas, offset));
+                }
+                else if constexpr (std::is_same_v<T, uint32_t>) {  // uint
+                    obj = new uint32_t(TouchSocketBitConverter::ToUInt32(datas, offset));
+                }
+                else if constexpr (std::is_same_v<T, int64_t>) {  // long
+                    obj = new int64_t(TouchSocketBitConverter::ToInt64(datas, offset));
+                }
+                else if constexpr (std::is_same_v<T, uint64_t>) {  // ulong
+                    obj = new uint64_t(TouchSocketBitConverter::ToUInt64(datas, offset));
+                }
+                else if constexpr (std::is_same_v<T, float>) {  // float
+                    obj = new float(TouchSocketBitConverter::ToSingle(datas, offset));
+                }
+                else if constexpr (std::is_same_v<T, double>) {  // double
+                    obj = new double(TouchSocketBitConverter::ToDouble(datas, offset));
+                }
+                else if constexpr (std::is_same_v<T, char>) {  // char
+                    obj = new char(TouchSocketBitConverter::ToChar(datas, offset));
+                }
+                else if constexpr (std::is_same_v<T, std::chrono::system_clock::time_point>) {  // DateTime
+                    int64_t ms_since_epoch = new int64_t(TouchSocketBitConverter::ToInt64(datas, offset));
+                    std::chrono::milliseconds duration_since_epoch(ms_since_epoch);
+                    obj = new std::chrono::system_clock::time_point(duration_since_epoch);
+                }
+                else if constexpr (std::is_same_v<T, std::vector<uint8_t>>) {  // byte[]
+                    std::vector<uint8_t> data(len);
+                    std::copy(datas.begin() + offset, datas.begin() + offset + len, data.begin());
+                    obj = data;
+                }
+                else {
+                    if constexpr (std::is_same_v<T, std::string>) { // string
+                        ByteBlock* byteBlock = new ByteBlock(datas);
+                        byteBlock->Pos(offset);
+                        obj = new std::string(byteBlock->ReadString());
+                    }
+                    else
+                    {
+                    }
+                    // len += SerializeClass(byteBlock, graph, serializerContext);
+                }
+            }
+        }
+        offset += len;
+        return obj;
+    }
 
 public:
 
@@ -153,4 +245,17 @@ public:
         byteBlock.SetLen(byteBlock.Position());
         return byteBlock.Buffer();
     }
+
+    // 反序列化对象
+    template <typename T>
+    static T Deserialize(std::vector<uint8_t> datas) {
+        int offset = 0;
+        if (datas[offset] != 1)
+        {
+            throw std::out_of_range("Deserialization data stream parsing error.");
+        }
+        offset += 1;
+        return *DeserializeObject<T>(datas, offset);
+    }
+
 };

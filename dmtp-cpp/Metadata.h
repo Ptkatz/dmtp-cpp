@@ -1,7 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <string>
-#include "ByteBlock.h"
+#include "Common.h"
 
 class Metadata : public IPackage {
 public:

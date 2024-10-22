@@ -1,6 +1,4 @@
 #pragma once
-#ifndef FASTBINARYFORMATTER_H
-#define FASTBINARYFORMATTER_H
 #include <vector>
 #include <string>
 #include <cstring>
@@ -8,14 +6,9 @@
 #include <algorithm>
 #include <cstdint>
 #include "json11.hpp"
-#include "FastBinaryFormatter.h"
 #include "SerializationType.h"
 #include "TouchSocketBitConverter.h"
-
-class IPackage;
-class ByteBlock;
-
-#endif
+#include "Common.h"
 
 class ByteBlock {
 private:

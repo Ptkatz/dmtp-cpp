@@ -135,9 +135,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ByteBlock.h" />
+    <ClInclude Include="Common.h" />
     <ClInclude Include="DmtpMessage.h" />
     <ClInclude Include="FastBinaryFormatter.h" />
     <ClInclude Include="json11.hpp" />
+    <ClInclude Include="ISerializeObject.h" />
     <ClInclude Include="Metadata.h" />
     <ClInclude Include="SerializationType.h" />
     <ClInclude Include="TouchSocketBitConverter.h" />
