@@ -176,7 +176,7 @@ public:
     }
 
     void Write(char value) {
-        Write(std::vector<uint8_t>(reinterpret_cast<uint8_t*>(&value), reinterpret_cast<uint8_t*>(&value) + 2));
+        Write(std::vector<uint8_t>(reinterpret_cast<uint8_t*>(&value), reinterpret_cast<uint8_t*>(&value) + 1));
     }
 
     // 读取布尔值方法

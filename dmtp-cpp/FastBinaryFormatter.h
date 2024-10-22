@@ -23,7 +23,11 @@ private:
             auto jsonObj = _Obj.operator json11::Json();  // 调用多态的转换操作符
             json11::Json::object map = jsonObj.object_items();
             for (const auto& pair : map) {
-                byteBlock.Write(pair.first);
+                std::vector<uint8_t> propertyBytes = std::vector<uint8_t>(pair.first.begin(), pair.first.end());
+                char propertyLen = static_cast<char>(propertyBytes.size());
+                byteBlock.Write(propertyLen);
+                byteBlock.Write(propertyBytes);
+                len += propertyBytes.size() + 1;
                 if (pair.second.is_string()) {
                     len += SerializeObject(byteBlock, pair.second.string_value());
                 }
