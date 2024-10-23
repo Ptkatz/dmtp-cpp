@@ -129,7 +129,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FastBinaryFormatter.cpp" />
     <ClCompile Include="json11.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
@@ -138,11 +137,16 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="DmtpMessage.h" />
     <ClInclude Include="FastBinaryFormatter.h" />
+    <ClInclude Include="IPackage.h" />
+    <ClInclude Include="IWaitHandle.h" />
     <ClInclude Include="json11.hpp" />
     <ClInclude Include="ISerializeObject.h" />
     <ClInclude Include="Metadata.h" />
+    <ClInclude Include="MsgRouterPackage.h" />
+    <ClInclude Include="RouterPackage.h" />
     <ClInclude Include="SerializationType.h" />
     <ClInclude Include="TouchSocketBitConverter.h" />
+    <ClInclude Include="WaitRouterPackage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

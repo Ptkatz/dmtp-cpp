@@ -1,5 +1,11 @@
 #pragma once
-class IPackage;
+#include <iostream>
+
+__interface IPackage;
+class IWaitHandle;
+class IWaitResult;
 class ByteBlock;
 class FastBinaryFormatter;
-class ISerializeObject;
+class SerializeObjectBase;
+class RouterPackage;
+class MsgRouterPackage;

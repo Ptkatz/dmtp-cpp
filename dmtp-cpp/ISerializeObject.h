@@ -1,6 +1,6 @@
 #pragma once
 #include "json11.hpp"
-class ISerializeObject {
+class SerializeObjectBase {
 public:
 	virtual operator json11::Json() const = 0;
 };

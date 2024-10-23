@@ -3,27 +3,33 @@
 #include "Metadata.h"
 #include "FastBinaryFormatter.h"
 #include "ISerializeObject.h"
+#include "MsgRouterPackage.h"
+#include "WaitRouterPackage.h"
 #include <iostream>
 
-class MyObject : public ISerializeObject {
+class MyObject : public SerializeObjectBase {
 public:
     int id;
     std::string name;
+    bool isok;
 
-    MyObject() : id(0), name("") {}
-    MyObject(int id, std::string name) : id(id), name(name) {}
+    MyObject() : id(0), name(""), isok(false) {}
+    MyObject(int id, std::string name) : id(id), name(name), isok(false) {}
+    MyObject(int id, std::string name, bool isok) : id(id), name(name), isok(isok) {}
 
     // 从json11::Json构造MyObject
     MyObject(const json11::Json& json) {
         id = json["id"].int_value();
         name = json["name"].string_value();
+        isok = json["isok"].bool_value();
     }
 
     // 将MyObject序列化为json11::Json
    operator json11::Json() const override {
         return json11::Json::object{
             {"id", id},
-            {"name", name}
+            {"name", name},
+            {"isok", isok}
         };
     }
 };
@@ -62,19 +68,23 @@ void TestMetadata() {
 }
 
 int TestFastSerialize() {
-    //auto bytes1 = FastBinaryFormatter::Serialize<std::string>("test");
-    //auto str1 = FastBinaryFormatter::Deserialize<std::string>(bytes1);
+    MyObject obj1(1, "TestA", true);
+    MyObject obj2(2, "TestB", false);
 
-    MyObject obj(1, "Test");
-    auto jsonObj = obj.operator json11::Json();
-    json11::Json::object map = jsonObj.object_items();
+    std::vector<MyObject> objs{ obj1, obj2 };
+    auto bytesVector = FastBinaryFormatter::Serialize<std::vector<MyObject>>(objs);
+    auto deVector = FastBinaryFormatter::Deserialize<std::vector<MyObject>, MyObject>(bytesVector);
 
-    auto bytes2 = FastBinaryFormatter::Serialize<MyObject>(obj);
-    
     return 0;
 }
 
 int main()
 {
-    TestFastSerialize();
+    WaitRouterPackage msgPackage;
+    //msgPackage.Message = "test";
+    ByteBlock byteBlock;
+    msgPackage.Package(byteBlock);
+
+
+    printf("");
 }

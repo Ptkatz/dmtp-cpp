@@ -21,9 +21,6 @@
     <ClCompile Include="json11.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="FastBinaryFormatter.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ByteBlock.h">
@@ -51,6 +48,21 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ISerializeObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="IWaitHandle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RouterPackage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="IPackage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WaitRouterPackage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MsgRouterPackage.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

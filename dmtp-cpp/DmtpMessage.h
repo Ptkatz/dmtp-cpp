@@ -2,6 +2,7 @@
 #include <WinSock2.h>
 #include <memory>
 #include "ByteBlock.h"
+#include "Common.h"
 #pragma comment(lib, "Ws2_32.lib")
 
 class DmtpMessage {

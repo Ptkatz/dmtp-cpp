@@ -24,7 +24,7 @@ public:
     }
 
     // 打包方法
-    void Package(ByteBlock& byteBlock) const override {
+    void Package(ByteBlock& byteBlock) override {
         byteBlock.Write(static_cast<int32_t>(data.size()));  // 写入键值对的数量
         for (const auto& item : data) {
             byteBlock.Write(item.first);  // 写入键
@@ -41,4 +41,7 @@ public:
             data[key] = value;  // 添加到map中
         }
     }
+
+    Metadata() = default;
+    ~Metadata() = default;
 };

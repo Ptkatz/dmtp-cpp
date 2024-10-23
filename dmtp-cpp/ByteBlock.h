@@ -9,6 +9,7 @@
 #include "SerializationType.h"
 #include "TouchSocketBitConverter.h"
 #include "Common.h"
+#include "IPackage.h"
 
 class ByteBlock {
 private:
@@ -174,6 +175,12 @@ public:
         m_position += 2;
         return value;
     }
+
+
+    void Write(uint8_t value) {
+        Write(std::vector<uint8_t>(reinterpret_cast<uint8_t*>(&value), reinterpret_cast<uint8_t*>(&value) + 1));
+    }
+
 
     void Write(char value) {
         Write(std::vector<uint8_t>(reinterpret_cast<uint8_t*>(&value), reinterpret_cast<uint8_t*>(&value) + 1));
@@ -414,14 +421,4 @@ public:
             package->Package(*this);
         }
     }
-
-
-};
-
-class IPackage {
-public:
-    virtual void Package(ByteBlock& byteBlock) const = 0;
-    virtual void Unpackage(ByteBlock& byteBlock) = 0;
-
-    virtual ~IPackage() = default;
 };
