@@ -65,5 +65,11 @@
     <ClInclude Include="MsgRouterPackage.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DmtpRpcPackage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FeedbackType.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

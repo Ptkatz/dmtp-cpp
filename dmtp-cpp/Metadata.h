@@ -8,7 +8,7 @@ public:
     // 使用unordered_map模拟Dictionary<string, string>
     std::unordered_map<std::string, std::string> data;
 
-    // 获取元素，如果不存在则返回空字符串
+    //获取元素，如果不存在则返回空字符串
     std::string operator[](const std::string& key) const {
         auto it = data.find(key);
         if (it != data.end()) {
@@ -41,7 +41,4 @@ public:
             data[key] = value;  // 添加到map中
         }
     }
-
-    Metadata() = default;
-    ~Metadata() = default;
 };

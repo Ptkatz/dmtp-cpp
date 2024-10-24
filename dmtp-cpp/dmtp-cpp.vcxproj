@@ -136,7 +136,9 @@
     <ClInclude Include="ByteBlock.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="DmtpMessage.h" />
+    <ClInclude Include="DmtpRpcPackage.h" />
     <ClInclude Include="FastBinaryFormatter.h" />
+    <ClInclude Include="FeedbackType.h" />
     <ClInclude Include="IPackage.h" />
     <ClInclude Include="IWaitHandle.h" />
     <ClInclude Include="json11.hpp" />

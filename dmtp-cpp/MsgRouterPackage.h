@@ -6,7 +6,6 @@
 class MsgRouterPackage : public RouterPackage
 {
 public:
-	std::string Message;
 	void PackageBody(ByteBlock& byteBlock) override {
 		byteBlock.Write(Message);
 	}
@@ -16,4 +15,10 @@ public:
 		Message = byteBlock.ReadString();
 	}
 
+
+	MsgRouterPackage() = default;
+	~MsgRouterPackage() = default;
+
+protected:
+	std::string Message;
 };

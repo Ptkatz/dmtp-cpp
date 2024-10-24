@@ -421,4 +421,43 @@ public:
             package->Package(*this);
         }
     }
+
+    void WriteBytesPackage(std::vector<uint8_t> value) {
+        if (value.empty())
+        {
+            WriteBytesPackage(value, 0, 0);
+        }
+        else
+        {
+            WriteBytesPackage(value, 0, value.size());
+        }
+    }
+
+    void WriteBytesPackage(std::vector<uint8_t> value, int offset, int length) {
+        if (value.empty())
+        {
+            Write(static_cast<uint8_t>(0));
+        }
+        else
+        {
+            Write(static_cast<uint8_t>(1));
+            Write(length);
+            Write(value, offset, length);
+        }
+    }
+
+    std::vector<uint8_t> ReadBytesPackage() {
+        std::vector<uint8_t> data;
+        uint8_t status = static_cast<uint8_t>(ReadByte());
+        if (status == 0)
+        {
+            return data;
+        }
+        int length = ReadInt32();
+        data = std::vector<uint8_t>(length);
+        std::memcpy(data.data(), m_buffer.data() + m_position, length);
+        m_position += length;
+        return data;
+    }
+
 };

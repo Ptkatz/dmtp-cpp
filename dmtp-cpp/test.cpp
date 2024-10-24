@@ -1,10 +1,8 @@
 ﻿#include "ByteBlock.h"
 #include "DmtpMessage.h"
-#include "Metadata.h"
 #include "FastBinaryFormatter.h"
 #include "ISerializeObject.h"
-#include "MsgRouterPackage.h"
-#include "WaitRouterPackage.h"
+#include "DmtpRpcPackage.h"
 #include <iostream>
 
 class MyObject : public SerializeObjectBase {
@@ -62,7 +60,7 @@ void TestMetadata() {
     Metadata unpackedMetadata;
     unpackedMetadata.Unpackage(byteBlock);
 
-    // 输出解包后的数据
+    //输出解包后的数据
     std::cout << "Key1: " << unpackedMetadata["Key1"] << std::endl;
     std::cout << "Key2: " << unpackedMetadata["Key2"] << std::endl;
 }
@@ -78,13 +76,40 @@ int TestFastSerialize() {
     return 0;
 }
 
+
+int TestDmtpRpcPackage() {
+    DmtpRpcPackage package;
+    Metadata metadata;
+    std::vector<std::vector<uint8_t>> params;
+    auto bytesStr = FastBinaryFormatter::Serialize<std::string>("123");
+    params.push_back(bytesStr);
+    metadata.Add("Key1", "Value1").Add("Key2", "Value2");
+    package._Metadata = metadata;
+    package._SerializationType = SerializationType::FastBinary;
+    package.Feedback = FeedbackType::WaitInvoke;
+    package.ParametersBytes = params;
+    package.MethodName = "Req";
+    package.SetMessage("okok");
+    ByteBlock byteBlock;
+    package.Package(byteBlock);
+
+    for (size_t i = 0; i < byteBlock.Len(); i++)
+    {
+        uint8_t b = byteBlock.Buffer()[i];
+
+        printf("%d,", b);
+    }
+    byteBlock.Pos(0);
+    DmtpRpcPackage unpackage;
+    unpackage.Unpackage(byteBlock);
+
+
+    return 0;
+}
+
 int main()
 {
-    WaitRouterPackage msgPackage;
-    //msgPackage.Message = "test";
-    ByteBlock byteBlock;
-    msgPackage.Package(byteBlock);
-
+    TestDmtpRpcPackage();
 
     printf("");
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 
-__interface IPackage;
+class IPackage;
 class IWaitHandle;
 class IWaitResult;
 class ByteBlock;
