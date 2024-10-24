@@ -1,9 +1,7 @@
-﻿#include "ByteBlock.h"
-#include "DmtpMessage.h"
-#include "FastBinaryFormatter.h"
-#include "ISerializeObject.h"
-#include "DmtpRpcPackage.h"
-#include <iostream>
+﻿#include "../dmtp-cpp/DmtpMessage.h"
+#include "../dmtp-cpp/ISerializeObject.h"
+#include "../dmtp-cpp/FastBinaryFormatter.h"
+#include "../dmtp-cpp/DmtpRpcPackage.h"
 
 class MyObject : public SerializeObjectBase {
 public:
@@ -23,7 +21,7 @@ public:
     }
 
     // 将MyObject序列化为json11::Json
-   operator json11::Json() const override {
+    operator json11::Json() const override {
         return json11::Json::object{
             {"id", id},
             {"name", name},
@@ -45,26 +43,6 @@ void TestDmtpMessage() {
     DmtpMessage dmtpMsg = DmtpMessage::CreateFrom(dmtpBlock.Buffer());
 }
 
-void TestMetadata() {
-    Metadata metadata;
-    ByteBlock byteBlock;
-    metadata.Add("Key1", "Value1").Add("Key2", "Value2");
-
-    // 打包数据
-    metadata.Package(byteBlock);
-
-    // 重置位置以进行解包
-    byteBlock.Pos(0);
-
-    // 解包数据
-    Metadata unpackedMetadata;
-    unpackedMetadata.Unpackage(byteBlock);
-
-    //输出解包后的数据
-    std::cout << "Key1: " << unpackedMetadata["Key1"] << std::endl;
-    std::cout << "Key2: " << unpackedMetadata["Key2"] << std::endl;
-}
-
 int TestFastSerialize() {
     MyObject obj1(1, "TestA", true);
     MyObject obj2(2, "TestB", false);
@@ -75,7 +53,6 @@ int TestFastSerialize() {
 
     return 0;
 }
-
 
 int TestDmtpRpcPackage() {
     DmtpRpcPackage package;

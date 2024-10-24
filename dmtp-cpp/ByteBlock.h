@@ -73,7 +73,7 @@ public:
 
     // ∂¡»°∑Ω∑®
     int Read(std::vector<uint8_t>& buffer, int offset, int length) {
-        int len = std::min(static_cast<int>(m_length - m_position), length);
+        int len = min(static_cast<int>(m_length - m_position), length);
         std::copy(m_buffer.begin() + m_position, m_buffer.begin() + m_position + len, buffer.begin() + offset);
         m_position += len;
         return len;
@@ -119,13 +119,13 @@ public:
                 lend *= 2;
             }
             if (lend > INT_MAX) {
-                lend = std::min(static_cast<int64_t>(need + 1024 * 1024 * 100), static_cast<int64_t>(INT_MAX));
+                lend = min(static_cast<int64_t>(need + 1024 * 1024 * 100), static_cast<int64_t>(INT_MAX));
             }
             SetCapacity(static_cast<int>(lend), true);
         }
         std::copy(buffer.begin() + offset, buffer.begin() + offset + count, m_buffer.begin() + m_position);
         m_position += count;
-        m_length = std::max(m_position, m_length);
+        m_length = max(m_position, m_length);
     }
 
     void Write(const ByteBlock& byteBlock) {

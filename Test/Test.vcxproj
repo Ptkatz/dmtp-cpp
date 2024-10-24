@@ -21,32 +21,32 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{30353645-a2cd-4c2d-a2c1-b963614dda08}</ProjectGuid>
-    <RootNamespace>dmtpcpp</RootNamespace>
+    <ProjectGuid>{07417a09-2c76-487e-bc89-9bb703ce532b}</ProjectGuid>
+    <RootNamespace>Test</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -120,7 +120,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,25 +129,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="json11.cpp" />
+    <ClCompile Include="Test.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ByteBlock.h" />
-    <ClInclude Include="Common.h" />
-    <ClInclude Include="DmtpMessage.h" />
-    <ClInclude Include="DmtpRpcPackage.h" />
-    <ClInclude Include="FastBinaryFormatter.h" />
-    <ClInclude Include="FeedbackType.h" />
-    <ClInclude Include="IPackage.h" />
-    <ClInclude Include="IWaitHandle.h" />
-    <ClInclude Include="json11.hpp" />
-    <ClInclude Include="ISerializeObject.h" />
-    <ClInclude Include="Metadata.h" />
-    <ClInclude Include="MsgRouterPackage.h" />
-    <ClInclude Include="RouterPackage.h" />
-    <ClInclude Include="SerializationType.h" />
-    <ClInclude Include="TouchSocketBitConverter.h" />
-    <ClInclude Include="WaitRouterPackage.h" />
+    <ProjectReference Include="..\dmtp-cpp\dmtp-cpp.vcxproj">
+      <Project>{30353645-a2cd-4c2d-a2c1-b963614dda08}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\HPSocket\HPSocketLIB\HPSocketLIB.vcxproj">
+      <Project>{d73a44ff-8818-41ec-8a8e-c36280f0832c}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
