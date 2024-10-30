@@ -1,8 +1,15 @@
-﻿#include "../dmtp-cpp/DmtpMessage.h"
-#include "../dmtp-cpp/ISerializeObject.h"
-#include "../dmtp-cpp/FastBinaryFormatter.h"
-#include "../dmtp-cpp/DmtpRpcPackage.h"
+﻿#include "stdafx.h"
+#include <iostream>
+#include "../HPSocket/Include/HPSocket/HPSocket.h"
+#include "../Dmtp/ISerializeObject.h"
+#include "../Dmtp/FastBinaryFormatter.h"
+#include "../Dmtp/DmtpRpcPackage.h"
+#include "../Dmtp/DmtpMessage.h"
+#include "../Dmtp/WaitVerify.h"
+#include "../Dmtp/DmtpActor.h"
+#include "../HPSocket.Dmtp/TcpDmtpActor.h"
 
+#pragma region Test Dmtp
 class MyObject : public SerializeObjectBase {
 public:
     int id;
@@ -30,7 +37,7 @@ public:
     }
 };
 
-void TestDmtpMessage() {
+int TestDmtpMessage() {
     ByteBlock byteBlock;
     MyObject obj(1, "example");
     byteBlock.Write(10);
@@ -41,6 +48,7 @@ void TestDmtpMessage() {
     ByteBlock dmtpBlock;
     dmtpMessage.Build(dmtpBlock);
     DmtpMessage dmtpMsg = DmtpMessage::CreateFrom(dmtpBlock.Buffer());
+    return 0;
 }
 
 int TestFastSerialize() {
@@ -80,13 +88,86 @@ int TestDmtpRpcPackage() {
     DmtpRpcPackage unpackage;
     unpackage.Unpackage(byteBlock);
 
+    return 0;
+}
+
+int TestWaitVerify() {
+    WaitVerify waitVerify;
+    waitVerify.Id = "0";
+    waitVerify.Token = "Dmtp";
+    auto jsonObj = json11::Json(waitVerify);
+    std::string jsonString = jsonObj.dump();
+    std::string err;
+    auto json = json11::Json::parse(jsonString, err);
+    if (err.empty()) {
+        WaitVerify waitVerify2 = WaitVerify(json);
+    }
 
     return 0;
 }
 
-int main()
-{
-    TestDmtpRpcPackage();
+int TestDmtpActor() {
+    TcpDmtpAcotr dmtpClient;
+    Metadata metadata;
+    dmtpClient.Handshake("Dmtp", "hello", metadata);
+    return 0;
+}
 
-    printf("");
+#pragma endregion
+
+#pragma region Test HPSocket
+class CListenerImpl : public CTcpClientListener
+{
+public:
+    EnHandleResult OnReceive(ITcpClient* pSender, CONNID dwConnID, const BYTE* pData, int iLength) override
+    {
+        printf("OnReceive\n");
+        return EnHandleResult::HR_OK;
+    }
+    EnHandleResult OnClose(ITcpClient* pSender, CONNID dwConnID, EnSocketOperation enOperation, int iErrorCode) override
+    {
+        printf("OnClose\n");
+        return EnHandleResult::HR_OK;
+    }
+
+    EnHandleResult OnHandShake(ITcpClient* pSender, CONNID dwConnID) override {
+        printf("OnHandShake\n");
+        return EnHandleResult::HR_OK;
+    }
+
+    EnHandleResult OnSend(ITcpClient* pSender, CONNID dwConnID, const BYTE* pData, int iLength) override {
+        printf("OnSend\n");
+        return EnHandleResult::HR_OK;
+    }
+};
+
+int TestHPSocketClient() {
+    CListenerImpl s_listener;
+    CTcpClientPtr s_pclient(&s_listener);
+    bool status = s_pclient->Start((LPCTSTR)"127.0.0.1", 7789, false, nullptr);
+    if (!status)
+    {
+        uint32_t err = s_pclient->GetLastError();
+    }
+    else
+    {
+        uint16_t protocol = htons(1);
+
+
+        while (true)
+        {
+            Sleep(1000);
+            //break;
+        }
+    }
+
+    return 0;
+}
+
+#pragma endregion
+
+
+int main(int argc, char* const argv[])
+{
+    return 0;
 }

@@ -2,8 +2,9 @@
 #include <unordered_map>
 #include <string>
 #include "Common.h"
+#include "ISerializeObject.h"
 
-class Metadata : public IPackage {
+class Metadata : public IPackage, public SerializeObjectBase {
 public:
     // 使用unordered_map模拟Dictionary<string, string>
     std::unordered_map<std::string, std::string> data;
@@ -40,5 +41,22 @@ public:
             std::string value = byteBlock.ReadString();  // 读取值
             data[key] = value;  // 添加到map中
         }
+    }
+
+    Metadata() = default;
+
+    Metadata(const json11::Json& json) {
+        auto items = json.object_items();
+        for (auto& pair : items) {
+            data[pair.first] = pair.second.string_value();
+        }
+    }
+
+    operator json11::Json() const override {
+        json11::Json::object obj;
+        for (auto &pair : data) {
+            obj[pair.first] = pair.second;
+        }
+        return obj;
     }
 };

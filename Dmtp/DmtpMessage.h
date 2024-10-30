@@ -8,9 +8,10 @@
 class DmtpMessage {
 private:
     int m_bodyLength = 0;
-    static const std::vector<uint8_t> Head;
 
 public:
+    static const std::vector<uint8_t> Head;
+
     ByteBlock* BodyByteBlock = nullptr;
     uint16_t ProtocolFlags = 0;
 

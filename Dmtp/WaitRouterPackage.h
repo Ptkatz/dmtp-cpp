@@ -14,7 +14,7 @@ public:
         IWaitResult::Message = message;
     }
 
-    std::string _GetMessage() {
+    std::string GetMessage() {
         return MsgRouterPackage::Message;
     }
 

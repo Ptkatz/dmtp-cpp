@@ -36,7 +36,7 @@ private:
         int len = 0;
         if constexpr (std::is_base_of_v<SerializeObjectBase, T>) {
             const SerializeObjectBase& _Obj = obj;  // 通过引用来处理派生类对象
-            auto jsonObj = _Obj.operator json11::Json();  // 调用多态的转换操作符
+            auto jsonObj = json11::Json(_Obj);  // 调用多态的转换操作符
             json11::Json::object map = jsonObj.object_items();
             for (const auto& pair : map) {
                 std::vector<uint8_t> propertyBytes = std::vector<uint8_t>(pair.first.begin(), pair.first.end());

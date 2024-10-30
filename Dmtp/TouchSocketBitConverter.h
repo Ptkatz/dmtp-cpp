@@ -61,4 +61,18 @@ public:
         std::memcpy(&value, data.data() + offset, sizeof(value));
         return value;
     }
+
+    static std::vector<uint8_t> GetBigEndianBytes(int32_t value) {
+        std::vector<uint8_t> bytes(sizeof(value));
+        std::memcpy(bytes.data(), &value, sizeof(value));
+        std::reverse(bytes.begin(), bytes.end());
+        return bytes;
+    }
+
+    static std::vector<uint8_t> GetBigEndianBytes(uint16_t value) {
+        std::vector<uint8_t> bytes(sizeof(value));
+        std::memcpy(bytes.data(), &value, sizeof(value));
+        std::reverse(bytes.begin(), bytes.end());
+        return bytes;
+    }
 };

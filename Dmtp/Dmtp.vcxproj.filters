@@ -68,5 +68,14 @@
     <ClInclude Include="FeedbackType.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="WaitVerify.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DmtpActor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DmtpVerifyEventArgs.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

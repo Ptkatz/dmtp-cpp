@@ -108,12 +108,6 @@
     <ClInclude Include="..\Src\SSLAgent.h">
       <Filter>HPSocket\SSL</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\HPSocket\SocketInterface.h">
-      <Filter>HPSocket\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\HPSocket\HPSocket.h">
-      <Filter>HPSocket\Include</Filter>
-    </ClInclude>
     <ClInclude Include="..\Src\TcpServer.h">
       <Filter>HPSocket\TCP</Filter>
     </ClInclude>
@@ -150,9 +144,6 @@
     <ClInclude Include="..\Src\UdpClient.h">
       <Filter>HPSocket\UDP</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\HPSocket\HPTypeDef.h">
-      <Filter>HPSocket\Include</Filter>
-    </ClInclude>
     <ClInclude Include="..\Src\HttpAgent.h">
       <Filter>HPSocket\HTTP</Filter>
     </ClInclude>
@@ -173,9 +164,6 @@
     </ClInclude>
     <ClInclude Include="..\Src\SocketHelper.h">
       <Filter>HPSocket\Global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\HPSocket\HPSocket-SSL.h">
-      <Filter>HPSocket\Include</Filter>
     </ClInclude>
     <ClInclude Include="..\Src\Common\FuncHelper.h">
       <Filter>Common</Filter>
@@ -206,6 +194,18 @@
     </ClInclude>
     <ClInclude Include="..\Src\InternalDef.h">
       <Filter>HPSocket\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\HPSocket\SocketInterface.h">
+      <Filter>HPSocket\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\HPSocket\HPSocket.h">
+      <Filter>HPSocket\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\HPSocket\HPSocket-SSL.h">
+      <Filter>HPSocket\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\HPSocket\HPTypeDef.h">
+      <Filter>HPSocket\Include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

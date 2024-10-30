@@ -9,6 +9,11 @@ public:
 class IWaitResult: public IWaitHandle{
 public:
 	uint8_t Status = 0;
+
+	void SetMessage(std::string message) {
+		Message = message;
+	}
+
 protected:
 	std::string Message;
 };
