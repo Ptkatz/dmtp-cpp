@@ -7,6 +7,7 @@
 #include "../Dmtp/DmtpMessage.h"
 #include "../Dmtp/WaitVerify.h"
 #include "../Dmtp/DmtpActor.h"
+#include "../HPSocket.Dmtp/TcpDmtpClient.h"
 #include "../HPSocket.Dmtp/TcpDmtpActor.h"
 
 #pragma region Test Dmtp
@@ -107,9 +108,18 @@ int TestWaitVerify() {
 }
 
 int TestDmtpActor() {
-    TcpDmtpAcotr dmtpClient;
+    TcpDmtpClient dmtpClient;
+    dmtpClient.Actor = new TcpDmtpActor();
+    std::string id = "test";
+    std::string token = "Dmtp";
+    std::string host = "127.0.0.1";
+    uint16_t port = 5555;
     Metadata metadata;
-    dmtpClient.Handshake("Dmtp", "hello", metadata);
+    dmtpClient.Connect(host, port, token, id, metadata);
+    while (true)
+    {
+
+    }
     return 0;
 }
 
@@ -144,21 +154,16 @@ public:
 int TestHPSocketClient() {
     CListenerImpl s_listener;
     CTcpClientPtr s_pclient(&s_listener);
-    bool status = s_pclient->Start((LPCTSTR)"127.0.0.1", 7789, false, nullptr);
+    bool status = s_pclient->Start((LPCTSTR)"127.0.0.1", 5555, false, nullptr);
     if (!status)
     {
         uint32_t err = s_pclient->GetLastError();
     }
     else
     {
-        uint16_t protocol = htons(1);
-
-
-        while (true)
-        {
-            Sleep(1000);
-            //break;
-        }
+        std::string content = "Hello World";
+        s_pclient->Send((BYTE*)content.c_str(), content.size());
+        Sleep(1000);
     }
 
     return 0;
@@ -169,5 +174,6 @@ int TestHPSocketClient() {
 
 int main(int argc, char* const argv[])
 {
+    TestDmtpActor();
     return 0;
 }

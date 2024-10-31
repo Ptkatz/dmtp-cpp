@@ -141,10 +141,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Common.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="IDmtpClient.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="TcpDmtpActor.h" />
     <ClInclude Include="TcpDmtpClient.h" />
+    <ClInclude Include="TcpDmtpClientListener.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

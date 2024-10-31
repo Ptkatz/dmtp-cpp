@@ -1,7 +1,10 @@
 #pragma once
+#include <chrono>
 #include "Common.h"
 #include "ByteBlock.h"
 #include "DmtpVerifyEventArgs.h"
+#include "DmtpMessage.h"
+#include "WaitVerify.h"
 
 class IDmtpActor
 {
@@ -46,7 +49,6 @@ public:
 		OnHandshaking(this, args);
 
 		WaitVerify waitVerify = WaitVerify(args.Token, args.Id, args._Metadata);
-
 		SendJsonObject(P1_Handshake_Request, waitVerify);
 	}
 

@@ -1,9 +1,21 @@
 #pragma once
-#include "../Dmtp/DmtpActor.h"
+#include "Common.h"
+#include "TcpDmtpClient.h"
 
-class TcpDmtpAcotr : public DmtpActor
+class TcpDmtpActor : public DmtpActor
 {
 public:
+	TcpDmtpClient* Client;
+
+	void OutputSend(DmtpActor* sender, std::vector<std::vector<uint8_t>> datas) override {
+		std::vector<uint8_t> transferBytes;
+		for (const auto& innerVec : datas) {
+			transferBytes.insert(transferBytes.end(), innerVec.begin(), innerVec.end());
+		}
+		Client->DmtpActorSend(transferBytes);
+	}
+
+
 	void OnHandshaking(DmtpActor* sender, DmtpVerifyEventArgs args) override {
 
 	}
@@ -12,8 +24,8 @@ public:
 
 	}
 
-	void OutputSend(DmtpActor* sender, std::vector<std::vector<uint8_t>> datas) override {
 
-	}
-
+	TcpDmtpActor() {
+		Client->Actor = this;
+	};
 };

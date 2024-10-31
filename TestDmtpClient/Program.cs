@@ -51,7 +51,17 @@ namespace TestDmtpClient
                 new ArraySegment<byte>(TouchSocketBitConverter.BigEndian.GetBytes(bytes.Length)),
                 new ArraySegment<byte>(bytes, 0, bytes.Length) 
             };
-            int bytesSent = sender.Send(transferBytes);
+
+            int totalLength = transferBytes.Sum(segment => segment.Count);
+            byte[] result = new byte[totalLength];
+            int offset = 0;
+            foreach (var segment in transferBytes)
+            {
+                Buffer.BlockCopy(segment.Array, segment.Offset, result, offset, segment.Count);
+                offset += segment.Count;
+            }
+
+            int bytesSent = sender.Send(result);
             Console.WriteLine("Sent {0} bytes to server.", bytesSent);
             // 接收服务器的响应
             byte[] resbytes = new byte[1024];
